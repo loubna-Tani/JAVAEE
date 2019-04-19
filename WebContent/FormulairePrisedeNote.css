@@ -1,0 +1,24 @@
+.element1{
+	position: relative;
+	height: 300px;
+    margin: 100px;
+	background: url("photos/original.jpg");
+	
+	
+}
+
+.element2{
+	 
+    margin-left: 400px;
+    text-shadow: 4px 4px 4px gray ;
+	
+}
+	
+h2{
+	position: relative;
+	bottom:-240px;
+	font-size:35px;
+    margin-left: 5px;
+    color:#00008B;
+	
+}

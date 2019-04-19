@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="FormulairePrisedeNote.css">
+<script src="jquery/jquery.min.js"></script>
+<title>Insert title here</title>
+</head>
+
+ 
+<body class="container">
+
+	<div class="jumbotron">
+    	<h1>Prise de notes</h1>
+	</div>
+
+    <div id="notes" class="row">
+    
+    	<div class="col-md-4">
+			<div class="card">
+				<div class="card-header">
+					<h3>Nouvelle note</h3>
+				</div>
+				<div class="card-body">
+					<textarea id="texte" class="col-12"></textarea>
+				</div>
+				<div class="card-footer">
+					<button class="btn btn-success" onclick="ajouterNote()">Ajouter</button>
+				</div>
+			</div>
+		</div>
+
+	</div>		
+    
+<script type="text/javascript">
+		
+$(function() {
+	loadNotes();
+});
+
+function loadNotes() {
+	$.getJSON("http://localhost:8080/javaeeModule9/rest/note",
+			  function(data) {
+
+		$.each(data, function() {
+			console.log(this);
+			ajouterBaliseNote(this);
+		});		
+		
+	});
+}
+
+function ajouterBaliseNote(note) {
+	var newContent = '<div class="col-md-4 note" id="card' + note.id + '">' +
+	 '	<div class="card">' +
+	 '		<div class="card-header">' +
+	 '			<h3>Note du ' + note.date + '</h3>' +
+	 '		</div>' +
+	 '		<div class="card-body">' +
+	 '			<textarea id="txt' + note.id + '" class="col-12" onkeyup="updateNote(' + note.id + ')">'  + note.texte + '</textarea>' +
+	 '		</div>' +
+	 '		<div class="card-footer">' +
+	 '			<button class="btn btn-danger" onclick="deletNote(' + note.id + ')">Supprimer</button>' +
+	 '		</div>' +
+	 '	</div>' +
+	 '</div>';
+
+	$("#notes").append(newContent);
+}
+
+function updateNote(id) {
+	var contenu = $("#txt".concat(id)).val();
+	
+	$.ajax({
+		type:"PUT",
+		url:"http://localhost:8080/javaeeModule9/rest/note/".concat(id),
+		data: {paramContenu: contenu}
+	});
+}
+
+
+function supprimerNote(id) {
+	$.ajax({
+		type:"POST",
+		url:"http://localhost:8080/javaeeModule9/rest/note/".concat(id),
+		success: function(result) {
+			$("#card".concat(id)).remove();
+		}
+	});
+}
+
+function ajouterNote() {
+	var contenu = $("#texte").val();
+	
+	$.ajax({
+		type:"POST",
+		url:"http://localhost:8080/javaeeModule9/rest/note/",
+		data: {texte: contenu},
+		success: function(result) {
+			loadNotes();
+		}
+	});
+	
+	$(".note").remove();
+	$("#texte").val("");
+	
+}
+	
+	
+	</script>
+</body>
+</html>
